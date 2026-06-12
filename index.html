@@ -97,6 +97,7 @@
     <div class="w-2 h-2 rounded-full bg-slate-600 transition-all duration-300 dot-step" data-step="3"></div>
     <div class="w-2 h-2 rounded-full bg-slate-600 transition-all duration-300 dot-step" data-step="4"></div>
     <div class="w-2 h-2 rounded-full bg-slate-600 transition-all duration-300 dot-step" data-step="5"></div>
+    <div class="w-2 h-2 rounded-full bg-slate-600 transition-all duration-300 dot-step" data-step="6"></div>
   </div>
 
   <!-- Main Container -->
@@ -401,9 +402,74 @@
 
           <div class="magnetic-btn-wrap">
             <button id="btn-poetry-next" class="btn-glow-pink text-white font-title font-bold px-8 py-3.5 rounded-full text-sm flex items-center gap-2 transform active:scale-95 transition-all">
-              Proceed to Receipt 💌
+              Since We Started 💖
             </button>
           </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ━━━━━━━━━━━━━━━━━━━
+         🕰️ SECTION 6: RELATIONSHIP TIMER SECTION
+         ━━━━━━━━━━━━━━━━━━━ -->
+    <section id="section-timer" class="page-section flex-col items-center max-w-xl w-full text-center my-auto">
+      <div class="glass-panel w-full p-8 md:p-12 rounded-3xl flex flex-col items-center relative overflow-hidden timer-card poetry-border-glow">
+        
+        <!-- Glowing mesh inside card -->
+        <div class="absolute -top-20 -left-20 w-40 h-40 bg-purpleTheme/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-20 -right-20 w-40 h-40 bg-pinkTheme/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <span class="text-4xl mb-4 animate-bounce duration-1000 select-none">💞</span>
+        
+        <h2 class="font-logo glow-text-pink text-4xl md:text-5xl text-transparent bg-clip-text bg-gradient-to-r from-pinkTheme via-purpleTheme to-peachTheme mb-2 drop-shadow-sm select-none">
+          Since Our Story Started 💖
+        </h2>
+        <p class="font-title text-sm md:text-base text-pink-400/80 dark:text-pink-300/85 mb-8 font-bold select-none">
+          “Since our first conversation…”
+        </p>
+
+        <!-- Live Timer Layout -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 w-full max-w-md mb-8">
+          <!-- Days Card -->
+          <div class="glass-panel p-4 rounded-2xl flex flex-col items-center justify-center border border-white/10 shadow-sm relative overflow-hidden select-none hover:scale-105 transition-all">
+            <span id="timer-days" class="font-title font-extrabold text-3xl md:text-4xl text-transparent bg-clip-text bg-gradient-to-br from-white to-pinkTheme glow-text-pink">00</span>
+            <span class="text-[10px] md:text-xs font-semibold tracking-wider text-slate-400 dark:text-slate-400 mt-1 uppercase">Days</span>
+          </div>
+
+          <!-- Hours Card -->
+          <div class="glass-panel p-4 rounded-2xl flex flex-col items-center justify-center border border-white/10 shadow-sm relative overflow-hidden select-none hover:scale-105 transition-all">
+            <span id="timer-hours" class="font-title font-extrabold text-3xl md:text-4xl text-transparent bg-clip-text bg-gradient-to-br from-white to-purpleTheme glow-text-pink">00</span>
+            <span class="text-[10px] md:text-xs font-semibold tracking-wider text-slate-400 dark:text-slate-400 mt-1 uppercase">Hours</span>
+          </div>
+
+          <!-- Minutes Card -->
+          <div class="glass-panel p-4 rounded-2xl flex flex-col items-center justify-center border border-white/10 shadow-sm relative overflow-hidden select-none hover:scale-105 transition-all">
+            <span id="timer-minutes" class="font-title font-extrabold text-3xl md:text-4xl text-transparent bg-clip-text bg-gradient-to-br from-white to-pinkTheme glow-text-pink">00</span>
+            <span class="text-[10px] md:text-xs font-semibold tracking-wider text-slate-400 dark:text-slate-400 mt-1 uppercase">Minutes</span>
+          </div>
+
+          <!-- Seconds Card -->
+          <div class="glass-panel p-4 rounded-2xl flex flex-col items-center justify-center border border-white/10 shadow-sm relative overflow-hidden select-none hover:scale-105 transition-all">
+            <span id="timer-seconds" class="font-title font-extrabold text-3xl md:text-4xl text-transparent bg-clip-text bg-gradient-to-br from-white to-purpleTheme glow-text-pink">00</span>
+            <span class="text-[10px] md:text-xs font-semibold tracking-wider text-slate-400 dark:text-slate-400 mt-1 uppercase">Seconds</span>
+          </div>
+        </div>
+
+        <!-- Rotating Quote Wrapper -->
+        <div class="h-14 flex items-center justify-center mb-8 px-4 w-full">
+          <p id="timer-quote" class="font-sans text-xs md:text-sm text-pink-300/90 dark:text-pink-200/90 font-medium tracking-wide leading-relaxed text-center italic drop-shadow-sm select-none opacity-0 transition-opacity duration-500"></p>
+        </div>
+
+        <p class="font-logo text-lg text-peachTheme mb-6 select-none">
+          ✨ “And somehow I still fall for you more every day.”
+        </p>
+
+        <!-- Next Action Button -->
+        <div class="magnetic-btn-wrap">
+          <button id="btn-timer-next" class="btn-glow-pink text-white font-title font-bold px-10 py-3.5 rounded-full text-sm flex items-center gap-2 transform active:scale-95 transition-all">
+            Get Our Date Ticket 💌
+          </button>
         </div>
 
       </div>

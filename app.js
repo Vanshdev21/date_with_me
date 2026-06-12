@@ -37,6 +37,7 @@ const elements = {
   foodSection: document.getElementById('section-food'),
   dateSection: document.getElementById('section-date'),
   sectionPoetry: document.getElementById('section-poetry'),
+  timerSection: document.getElementById('section-timer'),
   receiptSection: document.getElementById('section-receipt'),
   
   // Poetry Elements
@@ -47,6 +48,14 @@ const elements = {
   poemAuthor: document.getElementById('poem-author'),
   btnNextPoem: document.getElementById('btn-next-poem'),
   btnPoetryNext: document.getElementById('btn-poetry-next'),
+  
+  // Timer Elements
+  timerDays: document.getElementById('timer-days'),
+  timerHours: document.getElementById('timer-hours'),
+  timerMinutes: document.getElementById('timer-minutes'),
+  timerSeconds: document.getElementById('timer-seconds'),
+  timerQuote: document.getElementById('timer-quote'),
+  btnTimerNext: document.getElementById('btn-timer-next'),
   
   // Landing Elements
   btnYes: document.getElementById('btn-yes'),
@@ -564,6 +573,7 @@ function navigateToStep(stepIndex) {
     elements.foodSection,
     elements.dateSection,
     elements.sectionPoetry,
+    elements.timerSection,
     elements.receiptSection
   ];
 
@@ -621,6 +631,8 @@ function navigateToStep(stepIndex) {
               shiftAtmosphere(true);
               loadPoem();
             } else if (stepIndex === 5) {
+              startRelationshipTimer();
+            } else if (stepIndex === 6) {
               shiftAtmosphere(false);
               buildReceiptData();
               triggerReceiptArrivalAnimation();
@@ -1251,6 +1263,115 @@ elements.btnPoetryNext.addEventListener('click', (e) => {
   e.preventDefault();
   playSparkleSound();
   navigateToStep(5);
+});
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 🕰️ RELATIONSHIP TIMER LOGIC & QUOTES
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+let relationshipIntervalId = null;
+let quoteIntervalId = null;
+
+function startRelationshipTimer() {
+  const startDate = new Date("2023-11-03T00:00:00");
+  
+  // Clear any existing intervals to prevent duplicate runners
+  if (relationshipIntervalId) clearInterval(relationshipIntervalId);
+  if (quoteIntervalId) clearInterval(quoteIntervalId);
+
+  // Staggered cinematic reveal of timer page components
+  gsap.fromTo('#section-timer > div > *',
+    { opacity: 0, y: 25 },
+    { opacity: 1, y: 0, stagger: 0.12, duration: 0.8, ease: 'power2.out' }
+  );
+
+  let lastVals = { days: -1, hours: -1, minutes: -1, seconds: -1 };
+
+  function updateTimer() {
+    const diffMs = Date.now() - startDate.getTime();
+    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diffMs % (1000 * 60)) / 1000);
+
+    if (lastVals.days !== days) {
+      elements.timerDays.innerText = String(days).padStart(2, '0');
+      gsap.fromTo(elements.timerDays, 
+        { scale: 0.85, opacity: 0.6, filter: 'blur(3px)' }, 
+        { scale: 1, opacity: 1, filter: 'blur(0px)', duration: 0.45, ease: 'back.out(1.2)' }
+      );
+      lastVals.days = days;
+    }
+    if (lastVals.hours !== hours) {
+      elements.timerHours.innerText = String(hours).padStart(2, '0');
+      gsap.fromTo(elements.timerHours, 
+        { scale: 0.85, opacity: 0.6, filter: 'blur(3px)' }, 
+        { scale: 1, opacity: 1, filter: 'blur(0px)', duration: 0.45, ease: 'back.out(1.2)' }
+      );
+      lastVals.hours = hours;
+    }
+    if (lastVals.minutes !== minutes) {
+      elements.timerMinutes.innerText = String(minutes).padStart(2, '0');
+      gsap.fromTo(elements.timerMinutes, 
+        { scale: 0.85, opacity: 0.6, filter: 'blur(3px)' }, 
+        { scale: 1, opacity: 1, filter: 'blur(0px)', duration: 0.45, ease: 'back.out(1.2)' }
+      );
+      lastVals.minutes = minutes;
+    }
+    if (lastVals.seconds !== seconds) {
+      elements.timerSeconds.innerText = String(seconds).padStart(2, '0');
+      gsap.fromTo(elements.timerSeconds, 
+        { scale: 0.8, opacity: 0.5 }, 
+        { scale: 1, opacity: 1, duration: 0.35, ease: 'power1.out' }
+      );
+      lastVals.seconds = seconds;
+    }
+  }
+
+  updateTimer();
+  relationshipIntervalId = setInterval(updateTimer, 1000);
+
+  // Rotating Romantic Quotes List
+  const quotes = [
+    "“Every second with you matters.”",
+    "“You turned ordinary days into memories.”",
+    "“Our story started with one conversation ✨”",
+    "“Still my favorite notification 💕”",
+    "“From one text to infinite feelings.”"
+  ];
+
+  let quoteIdx = 0;
+
+  function rotateQuote() {
+    gsap.to(elements.timerQuote, {
+      opacity: 0,
+      y: -5,
+      filter: 'blur(3px)',
+      duration: 0.5,
+      onComplete: () => {
+        elements.timerQuote.innerText = quotes[quoteIdx];
+        quoteIdx = (quoteIdx + 1) % quotes.length;
+        gsap.fromTo(elements.timerQuote,
+          { opacity: 0, y: 5, filter: 'blur(3px)' },
+          { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.6, ease: 'power2.out' }
+        );
+      }
+    });
+  }
+
+  rotateQuote();
+  quoteIntervalId = setInterval(rotateQuote, 4200);
+}
+
+// Timer Next Button Handler
+elements.btnTimerNext.addEventListener('click', (e) => {
+  e.preventDefault();
+  playSparkleSound();
+  
+  // Clear ticking loops to conserve resources
+  if (relationshipIntervalId) clearInterval(relationshipIntervalId);
+  if (quoteIntervalId) clearInterval(quoteIntervalId);
+
+  navigateToStep(6);
 });
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

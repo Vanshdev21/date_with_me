@@ -579,6 +579,17 @@ a, button, select, input, textarea, [role="button"], .interactive-element {
   text-shadow: 0 0 12px rgba(255, 117, 151, 0.5), 0 0 30px rgba(255, 117, 151, 0.25);
 }
 
+/* Timer card floating animation */
+@keyframes float-timer {
+  0% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-5px) rotate(-0.3deg); }
+  100% { transform: translateY(0px) rotate(0deg); }
+}
+
+.timer-card {
+  animation: float-timer 8s infinite ease-in-out;
+}
+
 /* Button ripple effect */
 .btn-ripple {
   position: absolute;
