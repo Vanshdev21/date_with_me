@@ -303,8 +303,10 @@ class BgParticle {
   }
 }
 
-// Spawn background floaters
-for (let i = 0; i < 45; i++) {
+// Spawn background floaters (Throttled count for mobile screens)
+const isMobileDevice = window.innerWidth < 768;
+const bgParticleCount = isMobileDevice ? 18 : 45;
+for (let i = 0; i < bgParticleCount; i++) {
   bgParticles.push(new BgParticle());
 }
 
@@ -342,6 +344,8 @@ function animate() {
 animate();
 
 // Spawning mouse tracks
+let lastX = 0;
+let lastY = 0;
 window.addEventListener('mousemove', (e) => {
   state.mouseX = e.clientX;
   state.mouseY = e.clientY;
@@ -358,8 +362,16 @@ window.addEventListener('mousemove', (e) => {
     ease: 'power2.out'
   });
 
-  cursorParticles.push(new HeartTrailParticle(e.clientX, e.clientY));
-  if (cursorParticles.length > 70) cursorParticles.shift();
+  // Performance Optimization: Throttle heart spawns by movement distance
+  const dist = Math.hypot(e.clientX - lastX, e.clientY - lastY);
+  if (dist > 15) {
+    cursorParticles.push(new HeartTrailParticle(e.clientX, e.clientY));
+    lastX = e.clientX;
+    lastY = e.clientY;
+    
+    const maxTrail = isMobileDevice ? 20 : 35;
+    if (cursorParticles.length > maxTrail) cursorParticles.shift();
+  }
   
   // Parallax shifts
   handleParallax(e.clientX, e.clientY);
@@ -370,7 +382,14 @@ window.addEventListener('mousemove', (e) => {
 window.addEventListener('touchmove', (e) => {
   if (e.touches.length > 0) {
     const touch = e.touches[0];
-    cursorParticles.push(new HeartTrailParticle(touch.clientX, touch.clientY));
+    const dist = Math.hypot(touch.clientX - lastX, touch.clientY - lastY);
+    if (dist > 20) {
+      cursorParticles.push(new HeartTrailParticle(touch.clientX, touch.clientY));
+      lastX = touch.clientX;
+      lastY = touch.clientY;
+      
+      if (cursorParticles.length > 20) cursorParticles.shift();
+    }
     handleParallax(touch.clientX, touch.clientY);
   }
 });

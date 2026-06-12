@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Playball&family=Syne:wght@400..800&display=swap');
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   --font-logo: 'Playball', cursive;
   --font-title: 'Syne', sans-serif;
