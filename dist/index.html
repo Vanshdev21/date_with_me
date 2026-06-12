@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Date With Me? 💖</title>
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="A premium, cinematic, interactive love-themed proposal website to ask Anvi out on a special date! Redesigned by Vansh with Apple-level UI.">
+  <meta name="theme-color" content="#07020d">
+  
+  <!-- CDNs -->
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- GSAP Core for butter animations -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <!-- html2canvas -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <!-- FontAwesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Custom Styling Sheet -->
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            pinkTheme: '#ff7597',
+            purpleTheme: '#b57cff',
+            peachTheme: '#ffaa85',
+          }
+        }
+      }
+    }
+  </script>
+  <script type="module" crossorigin src="/assets/index-DGia11yh.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-DMb9iiE3.css">
+</head>
+<body class="bg-romantic-dark text-slate-100 flex flex-col min-h-screen relative">
+  
+  <!-- Cinema Noise Texture & Radial Glow Overlays -->
+  <div class="noise-overlay"></div>
+  <div id="cursor-glow"></div>
+  <canvas id="cursor-canvas"></canvas>
+  <canvas id="bg-particles"></canvas>
+
+  <!-- Ambient breathing mesh background glows -->
+  <div class="blur-orb orb-pink" id="orb-pink"></div>
+  <div class="blur-orb orb-purple" id="orb-purple"></div>
+  <div class="blur-orb orb-lavender" id="orb-lavender"></div>
+
+  <!-- Loading Screen -->
+  <div id="loading-screen">
+    <div class="flex flex-col items-center">
+      <div class="heart-beat-loader mb-6 text-pink-500 text-7xl md:text-8xl">
+        <i class="fa-solid fa-heart"></i>
+      </div>
+      <h2 class="font-title font-extrabold text-2xl md:text-3xl text-pink-300 animate-pulse text-center px-4 tracking-tight">
+        Entering our secret universe... 🌌✨
+      </h2>
+      <p class="text-xs text-slate-500 mt-2 font-accent tracking-[0.25em] uppercase">CREATING BEAUTIFUL MOMENTS</p>
+    </div>
+  </div>
+
+  <!-- Top Floating Glass Navbar -->
+  <nav class="fixed top-4 left-4 right-4 z-50 max-w-5xl mx-auto px-6 py-3 rounded-2xl glass-panel flex justify-between items-center transition-all duration-300">
+    <div class="flex items-center gap-2 interactive-element select-none" id="nav-logo">
+      <span class="font-logo text-2xl md:text-3xl text-transparent bg-clip-text bg-gradient-to-r from-pinkTheme to-purpleTheme">Date With Me</span>
+      <span class="text-lg">💖</span>
+    </div>
+    
+    <div class="flex items-center gap-3 md:gap-4">
+      <!-- Dark/Light Theme Switcher -->
+      <button id="theme-toggle" class="interactive-element w-9 h-9 md:w-10 md:h-10 rounded-full glass-panel flex items-center justify-center hover:scale-110 active:scale-95 transition-all text-pinkTheme" aria-label="Toggle Theme">
+        <i class="fa-solid fa-sun text-base hidden" id="sun-icon"></i>
+        <i class="fa-solid fa-moon text-base" id="moon-icon"></i>
+      </button>
+
+      <!-- Music Ambient Control Player -->
+      <button id="music-toggle" class="interactive-element h-9 md:h-10 px-3 md:px-4 rounded-full glass-panel flex items-center gap-2 hover:scale-105 active:scale-95 transition-all text-pinkTheme" aria-label="Toggle Romantic Music">
+        <div class="sound-wave flex items-center gap-0.5 h-6 justify-center">
+          <span class="eq-bar eq-bar-1"></span>
+          <span class="eq-bar eq-bar-2"></span>
+          <span class="eq-bar eq-bar-3"></span>
+          <span class="eq-bar eq-bar-4"></span>
+        </div>
+        <span class="text-[10px] font-accent font-semibold tracking-wider hidden sm:inline" id="music-status-text">AMBIENCE PLAY</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Step Indicator Bar -->
+  <div class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 glass-panel px-5 py-2.5 rounded-full hidden flex items-center gap-3" id="step-indicator">
+    <div class="w-2 h-2 rounded-full bg-pink-500 transition-all duration-300 dot-step" data-step="0"></div>
+    <div class="w-2 h-2 rounded-full bg-slate-600 transition-all duration-300 dot-step" data-step="1"></div>
+    <div class="w-2 h-2 rounded-full bg-slate-600 transition-all duration-300 dot-step" data-step="2"></div>
+    <div class="w-2 h-2 rounded-full bg-slate-600 transition-all duration-300 dot-step" data-step="3"></div>
+    <div class="w-2 h-2 rounded-full bg-slate-600 transition-all duration-300 dot-step" data-step="4"></div>
+  </div>
+
+  <!-- Main Container -->
+  <main class="flex-grow flex items-center justify-center p-4 pt-24 md:pt-28 z-10 select-none">
+    
+    <!-- ━━━━━━━━━━━━━━━━━━━
+         🌸 SECTION 1: HERO LANDING PAGE
+         ━━━━━━━━━━━━━━━━━━━ -->
+    <section id="section-landing" class="page-section active flex-col items-center max-w-xl w-full text-center my-auto">
+      <div class="glass-panel w-full p-8 md:p-14 rounded-3xl flex flex-col items-center relative overflow-hidden">
+        
+        <!-- Glowing Ambient Circle inside card -->
+        <div class="absolute -top-16 -left-16 w-32 h-32 bg-pinkTheme/10 rounded-full blur-2xl"></div>
+        
+        <!-- Floating hearts bubble decoration -->
+        <div class="w-20 h-20 bg-pink-100/10 dark:bg-pink-950/20 rounded-full flex items-center justify-center mb-8 shadow-inner border border-pinkTheme/20 relative">
+          <i class="fa-solid fa-heart-pulse text-pinkTheme text-4xl animate-pulse"></i>
+          <span class="absolute -top-1 -right-2 text-xl animate-bounce">✨</span>
+        </div>
+        
+        <h1 class="font-title font-extrabold text-4xl md:text-5xl text-transparent bg-clip-text bg-gradient-to-r from-pinkTheme via-purpleTheme to-peachTheme mb-4 tracking-tight leading-tight">
+          Will You Go On A Date With Me? 💖
+        </h1>
+        
+        <!-- Subtitle with Typing cursor effect -->
+        <div class="h-6 flex items-center justify-center mb-10">
+          <p id="subtitle-typewriter" class="font-sans text-sm md:text-base text-pink-400 dark:text-pink-300 tracking-wider typing-cursor font-medium"></p>
+        </div>
+
+        <!-- Buttons Container -->
+        <div class="flex flex-row gap-6 justify-center items-center min-h-[140px] relative mb-4" id="landing-button-container">
+          
+          <!-- YES BUTTON (WITH MAGNETIC WRAPPER) -->
+          <div class="magnetic-btn-wrap" id="yes-magnet-wrap">
+            <button id="btn-yes" class="btn-glow-pink text-white font-title font-bold px-12 py-4 rounded-full text-lg flex items-center gap-2 transform active:scale-95 transition-all z-20">
+              YES 💖
+            </button>
+          </div>
+          
+          <!-- NO BUTTON -->
+          <button id="btn-no" class="bg-white/10 dark:bg-slate-900/40 text-slate-800 dark:text-slate-200 font-title font-bold px-12 py-4 rounded-full text-lg border border-slate-300/30 dark:border-white/10 shadow-md backdrop-blur-md transition-all z-30 flex items-center gap-2">
+            NO 😈
+          </button>
+
+        </div>
+
+        <!-- Dynamic Cute Taunt Container -->
+        <div class="h-8 flex items-center justify-center">
+          <p id="taunt-message" class="text-pink-400 dark:text-pink-300 font-sans text-sm italic transition-all duration-300 opacity-0 font-medium"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ━━━━━━━━━━━━━━━━━━━
+         🎬 SECTION 2: MOVIE QUESTION PAGE
+         ━━━━━━━━━━━━━━━━━━━ -->
+    <section id="section-movie" class="page-section flex-col items-center max-w-2xl w-full text-center my-auto">
+      <div class="glass-panel w-full p-8 md:p-10 rounded-3xl flex flex-col items-center relative overflow-hidden">
+        
+        <div class="mb-5 text-purpleTheme text-4xl animate-bounce">
+          <i class="fa-solid fa-ticket-simple"></i>🍿
+        </div>
+        
+        <h2 class="font-title font-bold text-3xl md:text-4xl text-pinkTheme mb-2 tracking-tight">
+          Movie date too? 🍿✨
+        </h2>
+        
+        <p class="text-slate-500 dark:text-slate-400 text-sm mb-8 font-sans max-w-md">
+          Pick a romantic vibe to set the mood!
+        </p>
+
+        <!-- Movie Cards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5 w-full mb-8" id="movie-grid">
+          <!-- Movie Option 1: Rom-Com -->
+          <div class="movie-card interactive-element glass-panel p-6 rounded-2xl cursor-pointer flex flex-col items-center justify-between min-h-[180px] group border border-pinkTheme/10 hover:border-pinkTheme/40 hover:bg-pinkTheme/5 transition-all duration-300" data-movie="Rom-Com 💖">
+            <div class="w-16 h-16 rounded-full bg-pink-100 dark:bg-pink-950/30 border border-pink-200 dark:border-pink-900/20 flex items-center justify-center text-3xl mb-4 group-hover:scale-110 group-hover:shadow-[0_0_20px_rgba(255,117,151,0.25)] transition-all duration-500">
+              💖
+            </div>
+            <div>
+              <h3 class="font-title font-bold text-lg text-pinkTheme mb-1">Rom-Com</h3>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed font-sans">Sweet laughs, cozy vibes, and happy endings.</p>
+            </div>
+          </div>
+          
+          <!-- Movie Option 2: Comedy -->
+          <div class="movie-card interactive-element glass-panel p-6 rounded-2xl cursor-pointer flex flex-col items-center justify-between min-h-[180px] group border border-purpleTheme/10 hover:border-purpleTheme/40 hover:bg-purpleTheme/5 transition-all duration-300" data-movie="Comedy 😂">
+            <div class="w-16 h-16 rounded-full bg-purple-100 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-900/20 flex items-center justify-center text-3xl mb-4 group-hover:scale-110 group-hover:shadow-[0_0_20px_rgba(181,124,255,0.25)] transition-all duration-500">
+              😂
+            </div>
+            <div>
+              <h3 class="font-title font-bold text-lg text-pinkTheme mb-1">Comedy</h3>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed font-sans">Good laughs, funny jokes, and lighthearted fun.</p>
+            </div>
+          </div>
+
+          <!-- Movie Option 3: Spooky Horror -->
+          <div class="movie-card interactive-element glass-panel p-6 rounded-2xl cursor-pointer flex flex-col items-center justify-between min-h-[180px] group border border-peachTheme/10 hover:border-peachTheme/40 hover:bg-peachTheme/5 transition-all duration-300" data-movie="Spooky Horror 👻">
+            <div class="w-16 h-16 rounded-full bg-orange-100 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-900/20 flex items-center justify-center text-3xl mb-4 group-hover:scale-110 group-hover:shadow-[0_0_20px_rgba(255,170,133,0.25)] transition-all duration-500">
+              👻
+            </div>
+            <div>
+              <h3 class="font-title font-bold text-lg text-pinkTheme mb-1">Spooky Horror</h3>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed font-sans">Scary thrills so we are forced to cuddle 🥺</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Custom Movie Input -->
+        <div class="w-full max-w-sm mb-8">
+          <div class="relative flex items-center">
+            <input type="text" id="movie-custom-input" placeholder="Or type a custom movie... 🎬" class="w-full px-5 py-3.5 bg-white/10 dark:bg-black/30 backdrop-blur-md border border-white/20 dark:border-pink-900/20 rounded-full focus:outline-none focus:ring-2 focus:ring-pinkTheme text-center text-sm placeholder-slate-400 dark:placeholder-slate-500 text-slate-800 dark:text-slate-100 font-sans font-medium">
+            <span class="absolute right-5 text-pinkTheme"><i class="fa-solid fa-feather-pointed"></i></span>
+          </div>
+        </div>
+
+        <!-- Yes/Of Course confirming buttons -->
+        <div class="flex gap-4">
+          <!-- Button 1 -->
+          <div class="magnetic-btn-wrap">
+            <button id="btn-movie-no" class="btn-glow-purple px-8 py-3 text-white rounded-full text-sm font-title font-bold flex items-center gap-1.5">
+              OF COURSE! 💖
+            </button>
+          </div>
+          
+          <!-- Button 2 -->
+          <div class="magnetic-btn-wrap">
+            <button id="btn-movie-yes" class="btn-glow-pink px-8 py-3 text-white rounded-full text-sm font-title font-bold flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed">
+              YES 🍿
+            </button>
+          </div>
+        </div>
+
+        <!-- Feedback Banner -->
+        <div class="h-6 mt-5">
+          <p id="movie-feedback" class="text-pink-400 dark:text-pink-300 font-title font-bold text-sm transition-all duration-300 opacity-0"></p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ━━━━━━━━━━━━━━━━━━━
+         🍔 SECTION 3: FOOD SELECTION PAGE
+         ━━━━━━━━━━━━━━━━━━━ -->
+    <section id="section-food" class="page-section flex-col items-center max-w-3xl w-full text-center my-auto">
+      <div class="glass-panel w-full p-8 md:p-10 rounded-3xl flex flex-col items-center relative overflow-hidden">
+        
+        <div class="mb-4 text-pinkTheme text-4xl animate-bounce">
+          <i class="fa-solid fa-utensils"></i>🍟
+        </div>
+        
+        <h2 class="font-title font-bold text-3xl md:text-4xl text-pinkTheme mb-2 tracking-tight">
+          What do you want to eat? 🍟
+        </h2>
+        <p class="text-pink-400 dark:text-pink-300 text-sm font-sans mb-8 animate-pulse font-medium">
+          Choose your happiness level 😭
+        </p>
+
+        <!-- Food Selection Grid -->
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-4 w-full mb-8">
+          
+          <!-- Pizza -->
+          <div class="food-card interactive-element glass-panel p-5 rounded-2xl cursor-pointer flex flex-col items-center justify-center gap-3 group relative overflow-hidden" data-food="Pizza 🍕">
+            <span class="text-5xl group-hover:animate-bounce duration-300">🍕</span>
+            <span class="font-title font-bold text-sm text-slate-800 dark:text-slate-100">Pizza</span>
+            <div class="absolute inset-0 bg-pinkTheme/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          </div>
+          
+          <!-- Burger -->
+          <div class="food-card interactive-element glass-panel p-5 rounded-2xl cursor-pointer flex flex-col items-center justify-center gap-3 group relative overflow-hidden" data-food="Burger 🍔">
+            <span class="text-5xl group-hover:animate-bounce duration-300">🍔</span>
+            <span class="font-title font-bold text-sm text-slate-800 dark:text-slate-100">Burger</span>
+            <div class="absolute inset-0 bg-pinkTheme/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          </div>
+          
+          <!-- French Fries -->
+          <div class="food-card interactive-element glass-panel p-5 rounded-2xl cursor-pointer flex flex-col items-center justify-center gap-3 group relative overflow-hidden" data-food="French Fries 🍟">
+            <span class="text-5xl group-hover:animate-bounce duration-300">🍟</span>
+            <span class="font-title font-bold text-sm text-slate-800 dark:text-slate-100">Fries</span>
+            <div class="absolute inset-0 bg-pinkTheme/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          </div>
+          
+          <!-- Momos -->
+          <div class="food-card interactive-element glass-panel p-5 rounded-2xl cursor-pointer flex flex-col items-center justify-center gap-3 group relative overflow-hidden" data-food="Momos 🥟">
+            <span class="text-5xl group-hover:animate-bounce duration-300">🥟</span>
+            <span class="font-title font-bold text-sm text-slate-800 dark:text-slate-100">Momos</span>
+            <div class="absolute inset-0 bg-pinkTheme/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          </div>
+          
+          <!-- ME -->
+          <div class="food-card interactive-element glass-panel p-5 rounded-2xl cursor-pointer flex flex-col items-center justify-center gap-3 group relative overflow-hidden col-span-2 md:col-span-1" data-food="ME ❤️">
+            <span class="text-5xl group-hover:animate-pulse">❤️</span>
+            <span class="font-title font-bold text-sm text-pinkTheme">ME 🥺</span>
+            <div class="absolute inset-0 bg-gradient-to-tr from-pinkTheme/20 to-purpleTheme/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <span class="absolute top-2 right-2 text-xs animate-ping text-pinkTheme">✨</span>
+          </div>
+
+        </div>
+
+        <div class="magnetic-btn-wrap">
+          <button id="btn-food-next" class="btn-glow-pink text-white font-title font-bold px-10 py-4 rounded-full text-base flex items-center gap-2 transform active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+            CONFIRM FOOD VIBES 😋
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ━━━━━━━━━━━━━━━━━━━
+         📅 SECTION 4: DATE PICKER PAGE
+         ━━━━━━━━━━━━━━━━━━━ -->
+    <section id="section-date" class="page-section flex-col items-center max-w-md w-full text-center my-auto">
+      <div class="glass-panel w-full p-8 rounded-3xl flex flex-col items-center relative overflow-hidden">
+        
+        <div class="mb-4 text-pinkTheme text-4xl animate-bounce">
+          <i class="fa-solid fa-calendar-heart"></i>📅
+        </div>
+        
+        <h2 class="font-title font-bold text-3xl text-pinkTheme mb-2 tracking-tight">
+          Choose Our Special Day 💕
+        </h2>
+        <p class="text-slate-500 dark:text-slate-400 text-sm mb-8 font-sans">
+          Select a day for our calendar. Past days are locked!
+        </p>
+
+        <!-- Mini Calendar Card -->
+        <div class="w-full bg-white/10 dark:bg-black/30 backdrop-blur-md rounded-2xl p-5 border border-white/20 dark:border-pink-950/20 mb-6 shadow-inner">
+          
+          <!-- Month Control -->
+          <div class="flex justify-between items-center mb-5">
+            <button id="prev-month" class="interactive-element w-8 h-8 rounded-full flex items-center justify-center bg-white/20 dark:bg-slate-800/60 hover:bg-pinkTheme hover:text-white transition-colors text-pinkTheme">
+              <i class="fa-solid fa-chevron-left text-xs"></i>
+            </button>
+            <span id="calendar-month-year" class="font-title font-bold text-lg text-pinkTheme">June 2026</span>
+            <button id="next-month" class="interactive-element w-8 h-8 rounded-full flex items-center justify-center bg-white/20 dark:bg-slate-800/60 hover:bg-pinkTheme hover:text-white transition-colors text-pinkTheme">
+              <i class="fa-solid fa-chevron-right text-xs"></i>
+            </button>
+          </div>
+
+          <!-- Week Days -->
+          <div class="grid grid-cols-7 gap-1 text-center font-bold text-[10px] tracking-widest text-pink-400/70 mb-3">
+            <span>SU</span><span>MO</span><span>TU</span><span>WE</span><span>TH</span><span>FR</span><span>SA</span>
+          </div>
+
+          <!-- Days Grid Container -->
+          <div class="grid grid-cols-7 gap-1.5 font-sans text-xs md:text-sm" id="calendar-days-container"></div>
+        </div>
+
+        <!-- Confirmation Feedback Alert -->
+        <div class="h-12 flex items-center justify-center">
+          <p id="date-confirmation" class="text-pinkTheme font-title font-bold text-base transition-all duration-300 opacity-0 scale-90 text-center leading-snug"></p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ━━━━━━━━━━━━━━━━━━━
+         🧾 SECTION 5: FINAL RECEIPT PAGE
+         ━━━━━━━━━━━━━━━━━━━ -->
+    <section id="section-receipt" class="page-section flex-col items-center max-w-md w-full text-center relative my-auto">
+      
+      <!-- Receipt Animation Wrapper -->
+      <div class="receipt-wrapper w-full mb-8">
+        
+        <!-- Premium Thermal Receipt Card -->
+        <div class="receipt-card w-full p-8 text-left relative" id="receipt-capture-area">
+          
+          <!-- Watermark -->
+          <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-5">
+            <i class="fa-solid fa-heart text-[250px] text-pinkTheme"></i>
+          </div>
+
+          <!-- Receipt Header -->
+          <div class="receipt-header pb-5 mb-5 flex flex-col items-center text-center">
+            <span class="text-4xl mb-2">💌</span>
+            <h3 class="font-title font-extrabold text-2xl tracking-widest text-slate-800">DATE RECEIPT</h3>
+            <p class="text-[10px] text-slate-400 mt-1 uppercase tracking-widest font-mono" id="receipt-id">ID: #LOVE-0612-0000</p>
+          </div>
+
+          <!-- Receipt Details Metadata -->
+          <div class="grid grid-cols-2 gap-4 text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-5">
+            <div>
+              <p class="text-slate-400">👦 PLANNED BY:</p>
+              <p class="text-slate-800 text-sm font-extrabold">Vansh</p>
+            </div>
+            <div class="text-right">
+              <p class="text-slate-400">👩 PARTNER:</p>
+              <p class="text-slate-800 text-sm font-extrabold">Anvi</p>
+            </div>
+          </div>
+
+          <!-- Dotted Line Separator -->
+          <div class="border-t-2 border-dashed border-slate-200 my-4"></div>
+
+          <!-- Receipt Content List -->
+          <div class="space-y-4 my-5 text-xs md:text-sm text-slate-600">
+            <div class="flex justify-between items-start gap-4">
+              <span class="font-bold shrink-0">🎬 MOVIE:</span>
+              <span class="font-extrabold text-slate-900 text-right leading-relaxed" id="receipt-movie">Your Name ☄️</span>
+            </div>
+            
+            <div class="flex justify-between items-start gap-4">
+              <span class="font-bold shrink-0">🍔 FOOD ITEMS:</span>
+              <span class="font-extrabold text-slate-900 text-right leading-relaxed" id="receipt-food">Momos, Fries, ME</span>
+            </div>
+            
+            <div class="flex justify-between items-start gap-4">
+              <span class="font-bold shrink-0">📅 CONFIRMED DATE:</span>
+              <span class="font-extrabold text-slate-900 text-right leading-relaxed" id="receipt-date">June 18, 2026</span>
+            </div>
+          </div>
+
+          <!-- Dotted Line Separator -->
+          <div class="border-t-2 border-dashed border-slate-200 my-4"></div>
+
+          <!-- Status Indicators -->
+          <div class="space-y-3.5 text-xs text-slate-500 font-bold my-5 uppercase tracking-wide">
+            <div class="flex justify-between">
+              <span>💖 STATUS:</span>
+              <span class="text-emerald-600 font-extrabold tracking-wider">DATE CONFIRMED</span>
+            </div>
+            <div class="flex justify-between">
+              <span>♾️ LOVE LEVEL:</span>
+              <span class="text-pinkTheme font-extrabold tracking-wider">INFINITE 💖</span>
+            </div>
+          </div>
+
+          <!-- Receipt Footer -->
+          <div class="receipt-footer pt-5 mt-5 flex flex-col items-center">
+            <div class="flex justify-between w-full text-base font-title font-extrabold text-slate-800 mb-5">
+              <span>TOTAL:</span>
+              <span class="text-pinkTheme">FOREVER ❤️</span>
+            </div>
+
+            <!-- Custom QR Code and Barcode Layout -->
+            <div class="flex items-center gap-4 w-full bg-slate-50 p-4 rounded-xl border border-slate-100">
+              
+              <!-- Vector QR Code -->
+              <div class="qr-decor w-14 h-14 flex-shrink-0 flex items-center justify-center bg-white shadow-sm border border-slate-200">
+                <svg viewBox="0 0 100 100" class="w-full h-full text-slate-800">
+                  <path fill="currentColor" d="M10,10 h30 v30 h-30 z M15,15 h20 v20 h-20 z M22,22 h6 v6 h-6 z M60,10 h30 v30 h-30 z M65,15 h20 v20 h-20 z M72,72 h6 v6 h-6 z M10,60 h30 v30 h-30 z M15,65 h20 v20 h-20 z M60,60 h10 v10 h-10 z M80,60 h10 v10 h-10 z M70,70 h10 v10 h-10 z M60,80 h10 v10 h-10 z M80,80 h10 v10 h-10 z" />
+                  <circle cx="50" cy="50" r="10" fill="#ff7597" class="animate-pulse" />
+                </svg>
+              </div>
+
+              <!-- Vector Barcode -->
+              <div class="flex-grow flex flex-col justify-center overflow-hidden">
+                <div class="h-8 w-full flex items-end gap-[2px] bg-white border border-slate-200 px-2.5 rounded">
+                  <span class="w-1 bg-slate-800 h-6"></span>
+                  <span class="w-[2px] bg-slate-800 h-5"></span>
+                  <span class="w-2 bg-slate-800 h-6"></span>
+                  <span class="w-[1px] bg-slate-800 h-4"></span>
+                  <span class="w-1 bg-slate-800 h-6"></span>
+                  <span class="w-1 bg-slate-800 h-5"></span>
+                  <span class="w-[3px] bg-slate-800 h-6"></span>
+                  <span class="w-[1px] bg-slate-800 h-4"></span>
+                  <span class="w-2 bg-slate-800 h-6"></span>
+                  <span class="w-[2px] bg-slate-800 h-5"></span>
+                  <span class="w-1 bg-slate-800 h-6"></span>
+                </div>
+                <span class="text-[8px] text-center text-slate-400 mt-1 tracking-[0.2em] font-mono uppercase">LOVELINE-2026</span>
+              </div>
+
+            </div>
+          </div>
+          
+          <!-- receipt tear bottom edge -->
+          <div class="receipt-bottom"></div>
+        </div>
+
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex flex-col sm:flex-row gap-3 w-full justify-center">
+        <!-- Download button -->
+        <button id="btn-download-receipt" class="interactive-element flex items-center justify-center gap-2 px-5 py-3.5 bg-white/15 hover:bg-white/25 dark:bg-slate-900/50 dark:hover:bg-slate-800/50 border border-white/10 backdrop-blur-md rounded-full font-title font-bold text-xs transition-all shadow-md">
+          <i class="fa-solid fa-download text-pinkTheme"></i> Download Receipt
+        </button>
+
+        <!-- Copy Link button -->
+        <button id="btn-copy-receipt" class="interactive-element flex items-center justify-center gap-2 px-5 py-3.5 bg-white/15 hover:bg-white/25 dark:bg-slate-900/50 dark:hover:bg-slate-800/50 border border-white/10 backdrop-blur-md rounded-full font-title font-bold text-xs transition-all shadow-md">
+          <i class="fa-solid fa-link text-purpleTheme"></i> Copy Link
+        </button>
+
+        <!-- Telegram share button -->
+        <div class="magnetic-btn-wrap">
+          <button id="btn-telegram-share" class="btn-glow-purple text-white font-title font-bold text-xs px-6 py-3.5 rounded-full flex items-center justify-center gap-2">
+            <i class="fa-brands fa-telegram text-sm"></i> Share with Vansh
+          </button>
+        </div>
+      </div>
+
+      <!-- Toast Popup -->
+      <div id="toast-message" class="fixed bottom-20 left-1/2 -translate-x-1/2 bg-slate-900/90 text-slate-100 backdrop-blur-md text-xs py-2 px-5 rounded-full font-title shadow-lg border border-pinkTheme/20 opacity-0 transition-opacity duration-300 pointer-events-none z-50">
+        Copied to clipboard! 📋
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Cinema Footing -->
+  <footer class="w-full text-center py-5 text-[10px] text-slate-500 dark:text-slate-400 z-10 font-sans tracking-[0.15em] uppercase">
+    Designed with Love &bull; Vansh & Anvi &bull; &copy; 2026 Proposal Suite
+  </footer>
+
+  <!-- Code Logic Implementation -->
+</body>
+</html>
