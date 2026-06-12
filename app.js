@@ -1150,6 +1150,8 @@ async function loadPoem() {
     
     revealTimeline.to(elements.poetryDisplay, {
       opacity: 1,
+      filter: 'blur(0px)',
+      y: 0,
       duration: 0.5,
       ease: 'power2.out'
     });
