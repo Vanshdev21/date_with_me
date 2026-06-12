@@ -16,7 +16,8 @@ const state = {
   isDarkMode: true,
   noHoverCount: 0,
   mouseX: window.innerWidth / 2,
-  mouseY: window.innerHeight / 2
+  mouseY: window.innerHeight / 2,
+  isPoetryMode: false
 };
 
 // DOM Elements
@@ -35,7 +36,17 @@ const elements = {
   movieSection: document.getElementById('section-movie'),
   foodSection: document.getElementById('section-food'),
   dateSection: document.getElementById('section-date'),
+  sectionPoetry: document.getElementById('section-poetry'),
   receiptSection: document.getElementById('section-receipt'),
+  
+  // Poetry Elements
+  poetryLoading: document.getElementById('poetry-loading'),
+  poetryDisplay: document.getElementById('poetry-display'),
+  poemTitle: document.getElementById('poem-title'),
+  poemContent: document.getElementById('poem-content'),
+  poemAuthor: document.getElementById('poem-author'),
+  btnNextPoem: document.getElementById('btn-next-poem'),
+  btnPoetryNext: document.getElementById('btn-poetry-next'),
   
   // Landing Elements
   btnYes: document.getElementById('btn-yes'),
@@ -98,6 +109,8 @@ class RomanticAmbiencePlayer {
     if (this.ctx && this.ctx.state === 'suspended') {
       this.ctx.resume();
     }
+    
+    this.audio.volume = state.isPoetryMode ? 0.12 : 0.4;
     
     this.audio.play().then(() => {
       this.isPlaying = true;
@@ -266,25 +279,58 @@ class BgParticle {
 
   reset() {
     this.x = Math.random() * window.innerWidth;
-    this.y = window.innerHeight + 20;
-    this.size = Math.random() * 4 + 1.5;
-    this.alpha = Math.random() * 0.35 + 0.12;
-    // Speed increases when music plays
+    this.y = state.isPoetryMode ? -20 : window.innerHeight + 20;
+    this.size = Math.random() * 4 + 1.8;
+    this.alpha = Math.random() * 0.35 + 0.15;
     this.speed = (Math.random() * 0.6 + 0.25);
     this.wobbleVal = Math.random() * 100;
     this.wobbleSpeed = Math.random() * 0.02 + 0.005;
-    this.isHeart = Math.random() > 0.6;
-    this.color = Math.random() > 0.6 ? '#ff7597' : '#b57cff';
+    this.rotation = Math.random() * Math.PI * 2;
+    this.rotationSpeed = (Math.random() * 0.02 - 0.01);
+    
+    if (state.isPoetryMode) {
+      const rand = Math.random();
+      if (rand < 0.45) {
+        this.type = 'petal';
+        this.color = Math.random() > 0.5 ? '#ff4f79' : '#ff7597';
+      } else if (rand < 0.75) {
+        this.type = 'sparkle';
+        this.color = '#fffdeb';
+      } else {
+        this.type = 'heart';
+        this.color = '#ff7597';
+      }
+    } else {
+      this.type = Math.random() > 0.6 ? 'heart' : 'circle';
+      this.color = Math.random() > 0.6 ? '#ff7597' : '#b57cff';
+    }
   }
 
   update() {
-    const speedMult = state.isMusicPlaying ? 1.8 : 1.0;
-    this.y -= this.speed * speedMult;
-    this.wobbleVal += this.wobbleSpeed;
-    this.x += Math.sin(this.wobbleVal) * 0.3;
+    let speedMult = state.isMusicPlaying ? 1.8 : 1.0;
+    if (state.isPoetryMode) {
+      speedMult *= 0.45; // Slower drift for dreamy cinematic effect
+    }
     
-    if (this.y < -20) {
-      this.reset();
+    this.wobbleVal += this.wobbleSpeed;
+    this.rotation += this.rotationSpeed;
+    
+    if (state.isPoetryMode) {
+      // Gentle drift downwards
+      this.y += this.speed * speedMult;
+      this.x += Math.sin(this.wobbleVal) * 0.4;
+      
+      if (this.y > window.innerHeight + 20) {
+        this.reset();
+      }
+    } else {
+      // Normal drift upwards
+      this.y -= this.speed * speedMult;
+      this.x += Math.sin(this.wobbleVal) * 0.3;
+      
+      if (this.y < -20) {
+        this.reset();
+      }
     }
   }
 
@@ -292,13 +338,37 @@ class BgParticle {
     ctx.save();
     ctx.globalAlpha = this.alpha;
     ctx.fillStyle = this.color;
-    if (this.isHeart) {
+    
+    if (this.type === 'petal') {
+      // Draw organic rose petal shape
+      ctx.translate(this.x, this.y);
+      ctx.rotate(this.rotation);
+      ctx.beginPath();
+      ctx.moveTo(0, -this.size);
+      ctx.bezierCurveTo(this.size * 0.8, -this.size * 0.8, this.size, this.size * 0.5, 0, this.size);
+      ctx.bezierCurveTo(-this.size, this.size * 0.5, -this.size * 0.8, -this.size * 0.8, 0, -this.size);
+      ctx.closePath();
+      ctx.fill();
+    } else if (this.type === 'sparkle') {
+      // Draw 4-point star sparkle
+      ctx.translate(this.x, this.y);
+      ctx.rotate(this.rotation);
+      ctx.beginPath();
+      ctx.moveTo(0, -this.size * 1.5);
+      ctx.quadraticCurveTo(0, 0, this.size * 1.5, 0);
+      ctx.quadraticCurveTo(0, 0, 0, this.size * 1.5);
+      ctx.quadraticCurveTo(0, 0, -this.size * 1.5, 0);
+      ctx.quadraticCurveTo(0, 0, 0, -this.size * 1.5);
+      ctx.closePath();
+      ctx.fill();
+    } else if (this.type === 'heart') {
       drawHeartShape(ctx, this.x, this.y, this.size * 1.4);
     } else {
       ctx.beginPath();
       ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
       ctx.fill();
     }
+    
     ctx.restore();
   }
 }
@@ -493,6 +563,7 @@ function navigateToStep(stepIndex) {
     elements.movieSection,
     elements.foodSection,
     elements.dateSection,
+    elements.sectionPoetry,
     elements.receiptSection
   ];
 
@@ -547,6 +618,10 @@ function navigateToStep(stepIndex) {
             if (stepIndex === 3) {
               renderCalendar();
             } else if (stepIndex === 4) {
+              shiftAtmosphere(true);
+              loadPoem();
+            } else if (stepIndex === 5) {
+              shiftAtmosphere(false);
               buildReceiptData();
               triggerReceiptArrivalAnimation();
             }
@@ -923,6 +998,260 @@ elements.nextMonthBtn.addEventListener('click', () => {
 });
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 💌 POETRY LOGIC & ATMOSPHERE CONTROL
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+const fallbackPoems = [
+  {
+    title: "Sonnet XVII",
+    author: "Pablo Neruda",
+    poem: "I do not love you as if you were salt-rose, or topaz,\nor the arrow of carnations the fire shoots off.\nI love you as certain dark things are to be loved,\nin secret, between the shadow and the soul.\n\nI love you as the plant that never blooms\nbut carries in itself the light of hidden flowers;\nthanks to your love a certain solid fragrance,\nrisen from the earth, lives darkly in my body.\n\nI love you without knowing how, or when, or from where.\nI love you straightforwardly, without complexities or pride;\nso I love you because I know no other way than this:\n\nwhere I does not exist, nor you,\nso close that your hand on my chest is my hand,\nso close that your eyes close as I fall asleep."
+  },
+  {
+    title: "i carry your heart with me",
+    author: "E. E. Cummings",
+    poem: "i carry your heart with me(i carry it in\nmy heart)i am never without it(anywhere\ni go you go,my dear;and whatever is done\nby only me is your doing,my darling)\ni fear\nno fate(for you are my fate,my sweet)i want\nno world(for beautiful you are my world,my true)\nand it’s you are whatever a moon has always meant\nand whatever a sun will always sing is you\n\nhere is the deepest secret nobody knows\n(here is the root of the root and the bud of the bud\nand the sky of the sky of a tree called life;which grows\nhigher than soul can hope or mind can hide)\nand this is the wonder that's keeping the stars apart\n\ni carry your heart(i carry it in my heart)"
+  },
+  {
+    title: "Sonnet 18",
+    author: "William Shakespeare",
+    poem: "Shall I compare thee to a summer's day?\nThou art more lovely and more temperate:\nRough winds do shake the darling buds of May,\nAnd summer's lease hath all too short a date;\nSometime too hot the eye of heaven shines,\nAnd often is his gold complexion dimm'd;\nAnd every fair from fair sometimes declines,\nBy chance or nature's changing course untrimm'd;\nBut thy eternal summer shall not fade,\nNor lose possession of that fair thou ow'st;\nNor shall death brag thou wander'st in his shade,\nWhen in eternal lines to time thou grow'st:\nSo long as men can breathe or eyes can see,\nSo long lives this, and this gives life to thee."
+  },
+  {
+    title: "How Do I Love Thee?",
+    author: "Elizabeth Barrett Browning",
+    poem: "How do I love thee? Let me count the ways.\nI love thee to the depth and breadth and height\nMy soul can reach, when feeling out of sight\nFor the ends of being and ideal grace.\nI love thee to the level of every day's\nMost quiet need, by sun and candle-light.\nI love thee freely, as men strive for right.\nI love thee purely, as they turn from praise.\nI love thee with the passion put to use\nIn my old griefs, and with my childhood's faith.\nI love thee with a love I seemed to lose\nWith my lost saints. I love thee with the breath,\nSmiles, tears, of all my life; and, if God choose,\nI shall but love thee better after death."
+  },
+  {
+    title: "She Walks in Beauty",
+    author: "Lord Byron",
+    poem: "She walks in beauty, like the night\nOf cloudless climes and starry skies;\nAnd all that’s best of dark and bright\nMeet in her aspect and her eyes;\nThus mellowed to that tender light\nWhich heaven to gaudy day denies.\n\nOne shade the more, one ray the less,\nHad half impaired the nameless grace\nWhich waves in every raven tress,\nOr softly lightens o’er her face;\nWhere thoughts serenely sweet express,\nHow pure, how dear their dwelling-place.\n\nAnd on that cheek, and o'er that brow,\nSo soft, so calm, yet eloquent,\nThe smiles that win, the tints that glow,\nBut tell of days in goodness spent,\nA mind at peace with all below,\nA heart whose love is innocent!"
+  },
+  {
+    title: "Bright Star",
+    author: "John Keats",
+    poem: "Bright star, would I were stedfast as thou art—\nNot in lone splendour hung aloft the night\nAnd watching, with eternal lids apart,\nLike nature's patient, sleepless Eremite,\nThe moving waters at their priestlike task\nOf pure ablution round earth's human shores,\nOr gazing on the new soft-fallen mask\nOf snow upon the mountains and the moors—\nNo—yet still stedfast, still unchangeable,\nPillow'd upon my fair love's ripening breast,\nTo feel for ever its soft fall and swell,\nAwake for ever in a sweet unrest,\nStill, still to hear her tender-taken breath,\nAnd so live ever—or else swoon to death."
+  },
+  {
+    title: "I Am Not Yours",
+    author: "Sara Teasdale",
+    poem: "I am not yours, not lost in you, not lost,\nAlthough I long to be lost, utterly lost,\nLost as a candle lit at noon,\nLost as a snowflake in the sea.\n\nYou love me, and I find you still\nA spirit beautiful and bright,\nA light upon my journey, yet\nI am not yours, no, not yours quite.\n\nI want to lose myself, to be\nDeluged in your love, to be\nLike a light, a flower, a wind,\nLike a temple or a tree.\n\nI want to surrender, to be lost,\nTo be consumed by you,\nA spark in the great fire of your soul,\nA drop in the vast ocean of your love."
+  },
+  {
+    title: "Annabel Lee",
+    author: "Edgar Allan Poe",
+    poem: "It was many and many a year ago,\nIn a kingdom by the sea,\nThat a maiden there lived whom you may know\nBy the name of Annabel Lee;\nAnd this maiden she lived with no other thought\nThan to love and be loved by me.\n\nI was a child and she was a child,\nIn this kingdom by the sea,\nBut we loved with a love that was more than love—\nI and my Annabel Lee—\nWith a love that the wingèd seraphs of Heaven\nCoveted her and me.\n\nAnd this was the reason that, long ago,\nIn this kingdom by the sea,\nA wind blew out of a cloud, chilling\nMy beautiful Annabel Lee;\nSo that her highborn kinsmen came\nAnd bore her away from me,\nTo shut her up in a sepulchre\nIn this kingdom by the sea."
+  }
+];
+
+function shiftAtmosphere(isPoetry) {
+  state.isPoetryMode = isPoetry;
+  
+  // Fade background music volume
+  if (romanticPlayer && romanticPlayer.audio) {
+    const targetVolume = isPoetry ? 0.12 : 0.4;
+    gsap.to(romanticPlayer.audio, {
+      volume: targetVolume,
+      duration: 1.8,
+      ease: 'power1.inOut'
+    });
+  }
+  
+  // Cinematic background transitions (slower, blurred, deeper)
+  const orbs = document.querySelectorAll('.blur-orb');
+  if (isPoetry) {
+    gsap.to(orbs, {
+      filter: 'blur(160px)',
+      opacity: 0.6,
+      duration: 2.5,
+      ease: 'power2.out'
+    });
+    // Convert current background particles to poetry theme (roses/sparkles/hearts)
+    bgParticles.forEach(p => {
+      p.reset();
+    });
+  } else {
+    gsap.to(orbs, {
+      filter: 'blur(130px)',
+      opacity: 0.4,
+      duration: 2.0,
+      ease: 'power2.out'
+    });
+  }
+}
+
+async function loadPoem() {
+  // Show shimmer skeleton loader, hide display
+  elements.poetryDisplay.classList.add('hidden');
+  elements.poetryLoading.classList.remove('hidden');
+  
+  // Set shimmer elements height/width randomly for natural look
+  const shimmers = elements.poetryLoading.querySelectorAll('.shimmer-line');
+  shimmers.forEach((sh, idx) => {
+    if (idx > 0) {
+      sh.style.width = `${60 + Math.random() * 35}%`;
+    }
+  });
+
+  const apiURL = 'https://api.apileague.com/retrieve-random-poem?api-key=9b45bf843bf84bdfa9133fda7469ec05&min-lines=10&max-lines=20';
+  
+  let poemData = null;
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 3500); // 3.5s timeout abort
+
+  try {
+    const response = await fetch(apiURL, { signal: controller.signal });
+    clearTimeout(timeoutId);
+    if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
+    const data = await response.json();
+    
+    // Check if the response contains valid poem content fields
+    const content = data.poem || data.text || data.content;
+    if (content && typeof content === 'string') {
+      poemData = {
+        title: data.title || "A Secret Love Note",
+        author: data.author || "Your Secret Admirer",
+        poem: content
+      };
+    } else {
+      throw new Error("Invalid poem content structure");
+    }
+  } catch (err) {
+    clearTimeout(timeoutId);
+    console.warn("API League poem fetch failed or timed out. Gracefully falling back to premium offline registry.", err);
+    // Grab a random index from our fallback registry
+    const idx = Math.floor(Math.random() * fallbackPoems.length);
+    poemData = fallbackPoems[idx];
+  }
+
+  // Format and render poem
+  elements.poemTitle.innerText = poemData.title;
+  elements.poemAuthor.innerText = `— ${poemData.author}`;
+  
+  // Empty and split by lines
+  elements.poemContent.innerHTML = "";
+  const lines = poemData.poem.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+  
+  lines.forEach(lineText => {
+    const p = document.createElement('p');
+    p.className = 'poem-line opacity-0 filter blur-sm translate-y-3';
+    p.innerText = lineText;
+    elements.poemContent.appendChild(p);
+  });
+
+  // Small delay to let rendering complete
+  setTimeout(() => {
+    // Hide loading shimmer, show poem container
+    elements.poetryLoading.classList.add('hidden');
+    elements.poetryDisplay.classList.remove('hidden');
+    elements.poetryDisplay.style.opacity = 0;
+
+    // Cinematic stagger reveal
+    const revealTimeline = gsap.timeline();
+    
+    revealTimeline.to(elements.poetryDisplay, {
+      opacity: 1,
+      duration: 0.5,
+      ease: 'power2.out'
+    });
+
+    revealTimeline.fromTo(elements.poemTitle,
+      { opacity: 0, scale: 0.9, filter: 'blur(4px)' },
+      { opacity: 1, scale: 1, filter: 'blur(0px)', duration: 0.65, ease: 'back.out(1.2)' },
+      "-=0.2"
+    );
+
+    const lineElements = elements.poemContent.querySelectorAll('.poem-line');
+    revealTimeline.fromTo(lineElements,
+      { opacity: 0, y: 15, filter: 'blur(6px)' },
+      {
+        opacity: 1,
+        y: 0,
+        filter: 'blur(0px)',
+        stagger: 0.22,
+        duration: 0.8,
+        ease: 'power2.out'
+      },
+      "-=0.3"
+    );
+
+    revealTimeline.fromTo(elements.poemAuthor,
+      { opacity: 0, x: 25, filter: 'blur(3px)' },
+      { opacity: 1, x: 0, filter: 'blur(0px)', duration: 0.6, ease: 'power2.out' },
+      "-=0.25"
+    );
+  }, 100);
+}
+
+// Button ripple helper functions
+function createButtonRipple(e) {
+  const btn = e.currentTarget;
+  
+  // Create ripple circle element
+  const circle = document.createElement('span');
+  const diameter = Math.max(btn.clientWidth, btn.clientHeight);
+  const radius = diameter / 2;
+  
+  const rect = btn.getBoundingClientRect();
+  circle.style.width = circle.style.height = `${diameter}px`;
+  
+  // Calculate relative click coordinate inside button
+  const x = e.clientX - rect.left - radius;
+  const y = e.clientY - rect.top - radius;
+  
+  circle.style.left = `${x}px`;
+  circle.style.top = `${y}px`;
+  circle.classList.add('btn-ripple');
+  
+  // Remove existing ripples to prevent clogging
+  const oldRipple = btn.querySelector('.btn-ripple');
+  if (oldRipple) {
+    oldRipple.remove();
+  }
+  
+  btn.appendChild(circle);
+  
+  setTimeout(() => circle.remove(), 600);
+}
+
+function initButtonRipples() {
+  const buttons = document.querySelectorAll('button');
+  buttons.forEach(btn => {
+    const style = window.getComputedStyle(btn);
+    if (style.position === 'static') {
+      btn.style.position = 'relative';
+    }
+    if (style.overflow !== 'hidden') {
+      btn.style.overflow = 'hidden';
+    }
+    btn.addEventListener('click', createButtonRipple);
+  });
+}
+
+// Poetry Section Event Listeners
+elements.btnNextPoem.addEventListener('click', (e) => {
+  e.preventDefault();
+  playSparkleSound();
+  
+  // Transition out current poem content
+  gsap.to(elements.poetryDisplay, {
+    opacity: 0,
+    y: -15,
+    filter: 'blur(6px)',
+    duration: 0.45,
+    ease: 'power2.inOut',
+    onComplete: () => {
+      loadPoem();
+    }
+  });
+});
+
+elements.btnPoetryNext.addEventListener('click', (e) => {
+  e.preventDefault();
+  playSparkleSound();
+  navigateToStep(5);
+});
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // 🧾 LUXURY THERMAL RECEIPT PAGE & SHARES
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 function buildReceiptData() {
@@ -1086,6 +1415,7 @@ elements.musicToggle.addEventListener('click', () => {
 // 🚀 APPLICATION BOOTSTRAP
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 window.addEventListener('DOMContentLoaded', () => {
+  initButtonRipples();
   // Fadeout loader screen
   setTimeout(() => {
     gsap.to(elements.loadingScreen, {

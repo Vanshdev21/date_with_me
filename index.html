@@ -96,6 +96,7 @@
     <div class="w-2 h-2 rounded-full bg-slate-600 transition-all duration-300 dot-step" data-step="2"></div>
     <div class="w-2 h-2 rounded-full bg-slate-600 transition-all duration-300 dot-step" data-step="3"></div>
     <div class="w-2 h-2 rounded-full bg-slate-600 transition-all duration-300 dot-step" data-step="4"></div>
+    <div class="w-2 h-2 rounded-full bg-slate-600 transition-all duration-300 dot-step" data-step="5"></div>
   </div>
 
   <!-- Main Container -->
@@ -352,7 +353,64 @@
     </section>
 
     <!-- ━━━━━━━━━━━━━━━━━━━
-         🧾 SECTION 5: FINAL RECEIPT PAGE
+         📜 SECTION 5: POETRY SECTION
+         ━━━━━━━━━━━━━━━━━━━ -->
+    <section id="section-poetry" class="page-section flex-col items-center max-w-xl w-full text-center my-auto">
+      <div class="glass-panel w-full p-8 md:p-12 rounded-3xl flex flex-col items-center relative overflow-hidden poetry-card poetry-border-glow">
+        
+        <!-- Large Glowing background mesh inside card -->
+        <div class="absolute -top-20 -right-20 w-40 h-40 bg-pinkTheme/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-20 -left-20 w-40 h-40 bg-purpleTheme/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <!-- Quotes Background -->
+        <div class="quote-decor absolute top-2 left-6 select-none opacity-20 text-pinkTheme font-serif">“</div>
+        <div class="quote-decor absolute bottom-12 right-6 select-none opacity-20 text-pinkTheme font-serif">”</div>
+
+        <h2 class="font-logo glow-text-pink text-4xl md:text-5xl text-transparent bg-clip-text bg-gradient-to-r from-pinkTheme via-purpleTheme to-peachTheme mb-2 drop-shadow-sm">
+          Poems For You 💖
+        </h2>
+        <p class="font-sans text-xs md:text-sm text-pink-400/90 dark:text-pink-300/80 mb-8 tracking-wider font-semibold animate-pulse">
+          Every line reminds me of you ✨
+        </p>
+
+        <!-- Loading Shimmer Screen -->
+        <div id="poetry-loading" class="w-full flex flex-col gap-4 py-8 max-w-md">
+          <div class="shimmer-line h-6 w-3/4 mx-auto mb-4"></div>
+          <div class="shimmer-line h-4 w-5/6 mx-auto"></div>
+          <div class="shimmer-line h-4 w-4/5 mx-auto"></div>
+          <div class="shimmer-line h-4 w-11/12 mx-auto"></div>
+          <div class="shimmer-line h-4 w-2/3 mx-auto mt-2"></div>
+        </div>
+
+        <!-- Poem Display Container -->
+        <div id="poetry-display" class="hidden w-full py-2 max-w-md z-10">
+          <h3 id="poem-title" class="font-title font-extrabold text-xl md:text-2xl text-slate-800 dark:text-slate-100 mb-6 leading-tight select-text text-center tracking-tight"></h3>
+          
+          <div id="poem-content" class="font-handwriting text-xl md:text-2xl text-slate-700 dark:text-pink-100/95 space-y-3 leading-relaxed mb-8 select-text text-center italic max-h-[250px] overflow-y-auto pr-2"></div>
+          
+          <p id="poem-author" class="font-logo text-lg text-purpleTheme text-right pr-6 select-text mb-4"></p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row gap-4 w-full justify-center items-center mt-6">
+          <div class="magnetic-btn-wrap">
+            <button id="btn-next-poem" class="bg-white/10 dark:bg-slate-900/40 text-slate-800 dark:text-slate-200 font-title font-bold px-8 py-3.5 rounded-full text-sm border border-slate-300/30 dark:border-white/10 shadow-md backdrop-blur-md transition-all flex items-center gap-2">
+              <i class="fa-solid fa-heart-circle-bolt text-pinkTheme"></i> Another Poem 💕
+            </button>
+          </div>
+
+          <div class="magnetic-btn-wrap">
+            <button id="btn-poetry-next" class="btn-glow-pink text-white font-title font-bold px-8 py-3.5 rounded-full text-sm flex items-center gap-2 transform active:scale-95 transition-all">
+              Proceed to Receipt 💌
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ━━━━━━━━━━━━━━━━━━━
+         🧾 SECTION 6: FINAL RECEIPT PAGE
          ━━━━━━━━━━━━━━━━━━━ -->
     <section id="section-receipt" class="page-section flex-col items-center max-w-md w-full text-center relative my-auto">
       

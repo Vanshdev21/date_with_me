@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Playball&family=Syne:wght@400..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Playball&family=Syne:wght@400..800&family=Caveat:wght@400..700&display=swap');
+
 
 @tailwind base;
 @tailwind components;
@@ -8,6 +9,7 @@
   --font-logo: 'Playball', cursive;
   --font-title: 'Syne', sans-serif;
   --font-sans: 'Outfit', sans-serif;
+  --font-handwriting: 'Caveat', cursive;
 
   /* High-end Dark Luxury Romance Palette */
   --primary-pink: #ff7597;
@@ -511,6 +513,87 @@ a, button, select, input, textarea, [role="button"], .interactive-element {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #ff527b;
+}
+
+/* Floating Paper Card effect */
+@keyframes float-paper {
+  0% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-7px) rotate(0.4deg); }
+  100% { transform: translateY(0px) rotate(0deg); }
+}
+
+.poetry-card {
+  animation: float-paper 7s infinite ease-in-out;
+}
+
+/* Shimmer Loading Skeleton */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.shimmer-line {
+  background: linear-gradient(90deg, rgba(255, 117, 151, 0.05) 25%, rgba(255, 117, 151, 0.15) 37%, rgba(255, 117, 151, 0.05) 63%);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s infinite linear;
+  border-radius: 6px;
+}
+
+.dark .shimmer-line {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.03) 25%, rgba(255, 255, 255, 0.09) 37%, rgba(255, 255, 255, 0.03) 63%);
+  background-size: 200% 100%;
+}
+
+/* Large quote decors */
+.quote-decor {
+  font-family: Georgia, serif;
+  color: rgba(255, 117, 151, 0.12);
+  pointer-events: none;
+  user-select: none;
+}
+
+.poetry-border-glow {
+  animation: border-glow-pulse 6s infinite ease-in-out;
+}
+
+@keyframes border-glow-pulse {
+  0% {
+    border-color: rgba(255, 117, 151, 0.35);
+    box-shadow: 0 0 30px rgba(255, 117, 151, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+  50% {
+    border-color: rgba(181, 124, 255, 0.55);
+    box-shadow: 0 0 45px rgba(181, 124, 255, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  }
+  100% {
+    border-color: rgba(255, 117, 151, 0.35);
+    box-shadow: 0 0 30px rgba(255, 117, 151, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+}
+
+.font-handwriting {
+  font-family: var(--font-handwriting);
+}
+
+.glow-text-pink {
+  text-shadow: 0 0 12px rgba(255, 117, 151, 0.5), 0 0 30px rgba(255, 117, 151, 0.25);
+}
+
+/* Button ripple effect */
+.btn-ripple {
+  position: absolute;
+  border-radius: 50%;
+  transform: scale(0);
+  animation: ripple-anim 0.6s linear;
+  background-color: rgba(255, 255, 255, 0.45);
+  pointer-events: none;
+}
+
+@keyframes ripple-anim {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
 }
 
 /* Mobile Performance Optimizations */
