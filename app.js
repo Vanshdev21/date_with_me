@@ -303,9 +303,9 @@ class BgParticle {
   }
 }
 
-// Spawn background floaters (Throttled count for mobile screens)
+// Spawn background floaters (Disabled on mobile screens to protect performance)
 const isMobileDevice = window.innerWidth < 768;
-const bgParticleCount = isMobileDevice ? 18 : 45;
+const bgParticleCount = isMobileDevice ? 0 : 45;
 for (let i = 0; i < bgParticleCount; i++) {
   bgParticles.push(new BgParticle());
 }
@@ -416,10 +416,12 @@ function handleParallax(clientX, clientY) {
     });
   }
 
-  // Shift background mesh orbs in opposite directions to establish deep 3D separation
-  gsap.to('#orb-pink', { x: -normX * 45, y: -normY * 45, duration: 0.8, ease: 'power2.out' });
-  gsap.to('#orb-purple', { x: normX * 35, y: normY * 35, duration: 0.8, ease: 'power2.out' });
-  gsap.to('#orb-lavender', { x: -normX * 25, y: normY * 25, duration: 0.8, ease: 'power2.out' });
+  // Shift background mesh orbs in opposite directions (disabled on mobile for performance)
+  if (!isMobileDevice) {
+    gsap.to('#orb-pink', { x: -normX * 45, y: -normY * 45, duration: 0.8, ease: 'power2.out' });
+    gsap.to('#orb-purple', { x: normX * 35, y: normY * 35, duration: 0.8, ease: 'power2.out' });
+    gsap.to('#orb-lavender', { x: -normX * 25, y: normY * 25, duration: 0.8, ease: 'power2.out' });
+  }
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

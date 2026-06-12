@@ -512,3 +512,12 @@ a, button, select, input, textarea, [role="button"], .interactive-element {
 ::-webkit-scrollbar-thumb:hover {
   background: #ff527b;
 }
+
+/* Mobile Performance Optimizations */
+@media (max-width: 768px) {
+  .blur-orb {
+    animation: none !important;
+    transform: none !important;
+    opacity: 0.3 !important;
+  }
+}
