@@ -601,28 +601,36 @@ function escapeNoButton() {
     ease: 'back.out(1.6)'
   });
 
-  // Snapshot position if not fixed yet
-  if (elements.btnNo.style.position !== 'fixed') {
+  // Snapshot position relative to document if not absolute-positioned yet
+  if (elements.btnNo.style.position !== 'absolute') {
     const rect = elements.btnNo.getBoundingClientRect();
-    elements.btnNo.style.left = `${rect.left}px`;
-    elements.btnNo.style.top = `${rect.top}px`;
-    elements.btnNo.style.position = 'fixed';
+    const docX = rect.left + window.scrollX;
+    const docY = rect.top + window.scrollY;
+    
+    elements.btnNo.style.left = `${docX}px`;
+    elements.btnNo.style.top = `${docY}px`;
+    elements.btnNo.style.position = 'absolute';
     elements.btnNo.style.margin = '0';
+    
+    // Append to body to avoid parent overflow cuts and layout shifts
+    document.body.appendChild(elements.btnNo);
   }
 
-  // Reposition NO Button randomly inside viewport
+  // Reposition NO Button randomly inside viewport, accounting for scroll offsets
   const btnWidth = elements.btnNo.offsetWidth;
   const btnHeight = elements.btnNo.offsetHeight;
   
   const minX = 20;
   const maxX = window.innerWidth - btnWidth - 20;
-  const minY = 100;
-  const maxY = window.innerHeight - btnHeight - 80;
+  
+  // Keep layout safe from top navbar overlap
+  const minY = window.scrollY + 100;
+  const maxY = window.scrollY + window.innerHeight - btnHeight - 80;
 
   const newX = Math.random() * (maxX - minX) + minX;
   const newY = Math.random() * (maxY - minY) + minY;
   
-  // Spring jump ease
+  // Spring jump ease (absolute positions will scroll naturally with page contents!)
   gsap.to(elements.btnNo, {
     left: newX,
     top: newY,
